@@ -50,6 +50,16 @@ export default function Page() {
     try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { /* private/blocked storage — ignore */ }
   }, [db]);
 
+  // Must run before any early return so hook order stays stable across renders.
+  const payers = useMemo(() => {
+    const set = new Set(["Me"]);
+    if (db) {
+      db.payments.forEach((p) => p.paidBy && set.add(p.paidBy));
+      db.materials.forEach((m) => m.paidBy && set.add(m.paidBy));
+    }
+    return Array.from(set);
+  }, [db]);
+
   if (!db) return <div className="wrap"><div className="empty">Loading…</div></div>;
 
   // ---------- derived helpers ----------
@@ -62,13 +72,6 @@ export default function Page() {
   const balanceFor = (wid) => earnedFor(wid) - paidFor(wid);
   const materialsTotal = () => db.materials.reduce((s, m) => s + (+m.amount || 0), 0);
   const materialsForRoom = (rid) => db.materials.filter((m) => m.roomId === rid).reduce((s, m) => s + (+m.amount || 0), 0);
-
-  const payers = useMemo(() => {
-    const set = new Set(["Me"]);
-    db.payments.forEach((p) => p.paidBy && set.add(p.paidBy));
-    db.materials.forEach((m) => m.paidBy && set.add(m.paidBy));
-    return [...set];
-  }, [db]);
 
   // ---------- mutations ----------
   const update = (fn) => setDb((d) => { const n = clone(d); fn(n); return n; });
