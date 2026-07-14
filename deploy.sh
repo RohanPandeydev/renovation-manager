@@ -5,7 +5,7 @@ set -euo pipefail
 ALIAS="rohan-renovation.vercel.app"
 
 echo "▶ Building & deploying to production…"
-DEP_URL=$(vercel deploy --prod --yes | tail -1)
+DEP_URL=$(vercel deploy --prod --yes 2>&1 | grep -oE "renovation-manager-[a-z0-9]+-rohan-pandeys-projects-a9888392\.vercel\.app" | head -1)
 
 echo "▶ Pointing $ALIAS at $DEP_URL"
 vercel alias set "$DEP_URL" "$ALIAS"
