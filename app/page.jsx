@@ -4,6 +4,10 @@ import seedData from "./data.json";
 
 const KEY = "renovationWages";
 const DATA_VERSION = seedData.version || 1;
+
+// Deep-clone that works in every browser (avoids structuredClone, which
+// older mobile / in-app browsers don't support). Our data is plain JSON.
+const clone = (o) => JSON.parse(JSON.stringify(o));
 const money = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -17,7 +21,7 @@ const fmtDate = (iso) => {
 // ---------------- seed ----------------
 // Canonical data lives in ./data.json. `seed()` returns a fresh copy of it.
 function seed() {
-  return structuredClone(seedData);
+  return clone(seedData);
 }
 
 // Load saved data from the browser, but if data.json has a newer `version`
@@ -41,7 +45,10 @@ export default function Page() {
   const [modal, setModal] = useState(null); // {kind, id}
 
   useEffect(() => { setDb(loadDb()); }, []);
-  useEffect(() => { if (db) localStorage.setItem(KEY, JSON.stringify(db)); }, [db]);
+  useEffect(() => {
+    if (!db) return;
+    try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { /* private/blocked storage — ignore */ }
+  }, [db]);
 
   if (!db) return <div className="wrap"><div className="empty">Loading…</div></div>;
 
@@ -64,7 +71,7 @@ export default function Page() {
   }, [db]);
 
   // ---------- mutations ----------
-  const update = (fn) => setDb((d) => { const n = structuredClone(d); fn(n); return n; });
+  const update = (fn) => setDb((d) => { const n = clone(d); fn(n); return n; });
 
   const toggleAtt = (wid, kind) => update((n) => {
     const i = n.attendance.findIndex((a) => a.date === attDate && a.workerId === wid);
