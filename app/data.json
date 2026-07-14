@@ -1,0 +1,41 @@
+{
+  "version": 4,
+  "workers": [
+    { "id": "w_chattu", "name": "Chattu Mistri", "type": "Mistri", "rate": 700 },
+    { "id": "w_alex", "name": "Alex (2nd labour)", "type": "Labour", "rate": 500 },
+    { "id": "w_loren", "name": "Loren (1st labour)", "type": "Labour", "rate": 500 },
+    { "id": "w_rollins", "name": "Rollins Mistri (new — from 14th)", "type": "Mistri", "rate": 700 },
+    { "id": "w_simon", "name": "Simon (Lakdi Mistri)", "type": "Carpenter", "rate": 600 }
+  ],
+  "attendance": [
+    { "id": "a1", "date": "2026-07-11", "workerId": "w_chattu", "portion": 1 },
+    { "id": "a2", "date": "2026-07-11", "workerId": "w_alex", "portion": 1 },
+    { "id": "a3", "date": "2026-07-12", "workerId": "w_chattu", "portion": 1 },
+    { "id": "a4", "date": "2026-07-12", "workerId": "w_alex", "portion": 1 },
+    { "id": "a5", "date": "2026-07-12", "workerId": "w_loren", "portion": 1 },
+    { "id": "a6", "date": "2026-07-13", "workerId": "w_chattu", "portion": 1 },
+    { "id": "a7", "date": "2026-07-13", "workerId": "w_alex", "portion": 1 },
+    { "id": "a8", "date": "2026-07-13", "workerId": "w_loren", "portion": 1 },
+    { "id": "a9", "date": "2026-07-13", "workerId": "w_simon", "portion": 1 },
+    { "id": "a10", "date": "2026-07-14", "workerId": "w_chattu", "portion": 1 },
+    { "id": "a11", "date": "2026-07-14", "workerId": "w_alex", "portion": 1 },
+    { "id": "a12", "date": "2026-07-14", "workerId": "w_loren", "portion": 1 },
+    { "id": "a13", "date": "2026-07-14", "workerId": "w_rollins", "portion": 1 }
+  ],
+  "payments": [
+    { "id": "p1", "date": "2026-07-13", "workerId": "w_chattu", "amount": 2000, "note": "Paid till 13th — ₹100 was left before today", "paidBy": "Me" },
+    { "id": "p2", "date": "2026-07-14", "workerId": "w_loren", "amount": 2000, "note": "Wages + ₹500 advance for next day", "paidBy": "Me" },
+    { "id": "p3", "date": "2026-07-14", "workerId": "w_rollins", "amount": 700, "note": "New mistri — paid full for today", "paidBy": "Me" },
+    { "id": "p4", "date": "2026-07-13", "workerId": "w_simon", "amount": 600, "note": "Lakdi mistri — paid full", "paidBy": "Me" }
+  ],
+  "materials": [
+    { "id": "m1", "date": "2026-07-11", "item": "Bricks (1 taali)", "qty": 1, "unit": "taali", "amount": 5200, "vendor": "", "roomId": "", "paidBy": "Me" },
+    { "id": "m2", "date": "2026-07-11", "item": "Tagaari (tool)", "qty": 1, "unit": "pc", "amount": 330, "vendor": "", "roomId": "", "paidBy": "Me" },
+    { "id": "m3", "date": "2026-07-12", "item": "Mistri misc (bricks/tools etc.)", "qty": 0, "unit": "", "amount": 400, "vendor": "", "roomId": "", "paidBy": "Me" },
+    { "id": "m4", "date": "2026-07-13", "item": "Balu (½ taali) + Cement (10 bags) + Gitti (30 ft)", "qty": 0, "unit": "", "amount": 8620, "vendor": "Paid ₹5600 + ₹3000", "roomId": "", "paidBy": "Me" }
+  ],
+  "rooms": [
+    { "id": "r_kitchen", "name": "Kitchen", "budget": 50000 },
+    { "id": "r_bathroom", "name": "Bathroom", "budget": 30000 }
+  ]
+}

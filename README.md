@@ -18,5 +18,10 @@ npm run dev
 ```
 Open http://localhost:3000
 
+## Data
+The canonical data is in **`app/data.json`** (workers, attendance, payments, materials, rooms) with a `version` number. The app seeds from this file and saves your in-app edits to the browser (`localStorage`). When `data.json` is updated with a higher `version` and redeployed, the app loads the fresh data.
+
+> Note: Vercel's runtime filesystem is read-only, so the app cannot write back to `data.json` on the server. For shared, always-live persistence, add Vercel Blob/KV or a database and an API route.
+
 ## Deploy
 Deployed on Vercel. Push to `main` to trigger a new deployment.
