@@ -287,26 +287,45 @@ function Attendance({ db, attDate, setAttDate, toggleAtt, workerById }) {
 // ---------------- Payments ----------------
 function Payments({ db, workerById, openModal, delPay }) {
   const pays = [...db.payments].sort((a, b) => b.date.localeCompare(a.date));
+  const grandTotal = pays.reduce((s, p) => s + (+p.amount || 0), 0);
+  // group payments by date (newest first)
+  const byDate = {};
+  pays.forEach((p) => { (byDate[p.date] = byDate[p.date] || []).push(p); });
+  const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
   return (
     <>
       <div className="toolbar"><button className="btn primary" onClick={() => openModal("pay")}>+ Record payment / advance</button></div>
-      <div className="card">
-        <h2>All payments & advances</h2>
-        {!pays.length && <div className="empty">No payments recorded yet.</div>}
-        {pays.map((p) => {
-          const w = workerById(p.workerId);
-          return (
-            <div className="log pay" key={p.id}>
-              <div className="row"><b>{w ? w.name : "?"}</b><b>{money(p.amount)}</b></div>
-              <div className="small muted">{fmtDate(p.date)}{p.paidBy ? " · by " + p.paidBy : ""}{p.note ? " · " + p.note : ""}</div>
-              <div className="rowbtns">
-                <button className="btn small ghost" onClick={() => openModal("pay", p.id)}>Edit</button>
-                <button className="btn small warn" onClick={() => delPay(p.id)}>Delete</button>
-              </div>
-            </div>
-          );
-        })}
+      <div className="card" style={{ background: "linear-gradient(135deg,#1c2530,#182430)" }}>
+        <div className="k muted small">TOTAL PAID (all time)</div>
+        <div className="big">{money(grandTotal)}</div>
+        <div className="small muted">{pays.length} payment{pays.length === 1 ? "" : "s"} across {dates.length} day{dates.length === 1 ? "" : "s"}</div>
       </div>
+      {!pays.length && <div className="card"><div className="empty">No payments recorded yet.</div></div>}
+      {dates.map((date) => {
+        const items = byDate[date];
+        const dayTotal = items.reduce((s, p) => s + (+p.amount || 0), 0);
+        return (
+          <div className="card" key={date}>
+            <div className="row" style={{ marginBottom: 10 }}>
+              <h2 style={{ margin: 0 }}>{fmtDate(date)}</h2>
+              <span className="big" style={{ fontSize: 18 }}>{money(dayTotal)}</span>
+            </div>
+            {items.map((p) => {
+              const w = workerById(p.workerId);
+              return (
+                <div className="log pay" key={p.id}>
+                  <div className="row"><b>{w ? w.name : "?"}</b><b>{money(p.amount)}</b></div>
+                  <div className="small muted">{p.paidBy ? "by " + p.paidBy : ""}{p.note ? (p.paidBy ? " · " : "") + p.note : ""}</div>
+                  <div className="rowbtns">
+                    <button className="btn small ghost" onClick={() => openModal("pay", p.id)}>Edit</button>
+                    <button className="btn small warn" onClick={() => delPay(p.id)}>Delete</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
     </>
   );
 }

@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "workers": [
     { "id": "w_chattu", "name": "Chattu Mistri", "type": "Mistri", "rate": 700 },
     { "id": "w_alex", "name": "Alex (2nd labour)", "type": "Labour", "rate": 500 },
@@ -26,7 +26,8 @@
     { "id": "p1", "date": "2026-07-13", "workerId": "w_chattu", "amount": 2000, "note": "Paid till 13th — ₹100 was left before today", "paidBy": "Me" },
     { "id": "p2", "date": "2026-07-14", "workerId": "w_loren", "amount": 2000, "note": "Wages + ₹500 advance for next day", "paidBy": "Me" },
     { "id": "p3", "date": "2026-07-14", "workerId": "w_rollins", "amount": 700, "note": "New mistri — paid full for today", "paidBy": "Me" },
-    { "id": "p4", "date": "2026-07-13", "workerId": "w_simon", "amount": 600, "note": "Lakdi mistri — paid full", "paidBy": "Me" }
+    { "id": "p4", "date": "2026-07-13", "workerId": "w_simon", "amount": 600, "note": "Lakdi mistri — paid full", "paidBy": "Me" },
+    { "id": "p5", "date": "2026-07-14", "workerId": "w_alex", "amount": 2000, "note": "Paid in full till date", "paidBy": "Me" }
   ],
   "materials": [
     { "id": "m1", "date": "2026-07-11", "item": "Bricks (1 taali)", "qty": 1, "unit": "taali", "amount": 5200, "vendor": "", "roomId": "", "paidBy": "Me" },
