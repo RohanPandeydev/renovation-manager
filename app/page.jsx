@@ -24,12 +24,13 @@ function seed() {
   return clone(seedData);
 }
 
-// Load saved data from the browser, but if data.json has a newer `version`
-// (i.e. it was updated & redeployed), take the fresh file data instead.
+// Your device is the source of truth: once you have any saved data, the app
+// ALWAYS keeps it and never overwrites your edits. data.json only seeds a
+// brand-new device. (Use "Reset to start data" in Workers to reload the seed.)
 function loadDb() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.workers && (s.version || 0) >= DATA_VERSION) {
+    if (s && s.workers) {
       s.materials = s.materials || [];
       s.rooms = s.rooms || [];
       return s;
@@ -244,6 +245,25 @@ function Dashboard({ db, workerById, earnedFor, paidFor, daysFor, balanceFor, ma
         <button className="btn primary" onClick={() => openModal("pay")}>+ Pay a worker</button>
         <button className="btn" onClick={() => setTab("att")}>Mark attendance</button>
         <button className="btn" onClick={() => openModal("mat")}>+ Add material</button>
+      </div>
+
+      <div className="card">
+        <h2>Add your own data — quick guide</h2>
+        <div className="small muted" style={{ marginBottom: 8 }}>Everything is editable. Just use each tab:</div>
+        {[
+          ["Attendance", "Pick any date → tap Full or ½ for each worker who came. Do this every day."],
+          ["Payments", "“+ Record payment / advance” whenever you pay someone (any date)."],
+          ["Materials", "“+ Add material purchase” for anything you buy (cement, bricks, etc.)."],
+          ["Workers", "“+ Add worker” when a new mistri/labour joins."],
+          ["Rooms", "“+ Add room” to set a material budget per room."],
+        ].map(([t, d]) => (
+          <div key={t} style={{ display: "flex", gap: 8, padding: "5px 0" }}>
+            <span style={{ color: "var(--accent)", fontWeight: 700, minWidth: 84 }}>{t}</span>
+            <span className="small muted">{d}</span>
+          </div>
+        ))}
+        <div className="divider" />
+        <div className="small muted">Saved automatically on this phone/browser. Tip: open <b>Workers → Export backup</b> now and then so you never lose it. Every worker’s balance updates by itself.</div>
       </div>
     </>
   );
