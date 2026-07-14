@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 
-const KEY = "renovationWages_v2";
+const KEY = "renovationWages_v3";
 const money = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -16,28 +16,42 @@ const fmtDate = (iso) => {
 function seed() {
   const W = (name, type, rate) => ({ id: uid(), name, type, rate });
   const chattu = W("Chattu Mistri", "Mistri", 700);
-  const alex = W("Alex", "Labour", 500);
-  const loren = W("Loren", "Labour", 500);
-  const rollins = W("Rollins Mistri", "Mistri", 700);
-  const simon = W("Simon (Lakdi Mistri)", "Carpenter", 700);
+  const alex = W("Alex (2nd labour)", "Labour", 500);
+  const loren = W("Loren (1st labour)", "Labour", 500);
+  const rollins = W("Rollins Mistri (new — from 14th)", "Mistri", 700);
+  const simon = W("Simon (Lakdi Mistri)", "Carpenter", 600);
   const workers = [chattu, alex, loren, rollins, simon];
   const A = (date, wid, portion = 1) => ({ id: uid(), date, workerId: wid, portion });
   const attendance = [
+    // 11th
     A("2026-07-11", chattu.id), A("2026-07-11", alex.id),
-    A("2026-07-12", alex.id), A("2026-07-12", loren.id), A("2026-07-12", chattu.id),
-    A("2026-07-13", chattu.id), A("2026-07-13", simon.id), A("2026-07-13", alex.id), A("2026-07-13", loren.id),
-    A("2026-07-14", chattu.id), A("2026-07-14", rollins.id), A("2026-07-14", alex.id), A("2026-07-14", loren.id),
+    // 12th
+    A("2026-07-12", chattu.id), A("2026-07-12", alex.id), A("2026-07-12", loren.id),
+    // 13th
+    A("2026-07-13", chattu.id), A("2026-07-13", alex.id), A("2026-07-13", loren.id), A("2026-07-13", simon.id),
+    // 14th (today) — Rollins (new mistri) joins
+    A("2026-07-14", chattu.id), A("2026-07-14", alex.id), A("2026-07-14", loren.id), A("2026-07-14", rollins.id),
   ];
   const payments = [
-    { id: uid(), date: "2026-07-14", workerId: chattu.id, amount: 2200, note: "Paid till date — ₹600 balance pending", paidBy: "Me" },
+    // Chattu: earned 4d×700=2800, paid 2000 → ₹800 left (₹100 old + ₹700 today)
+    { id: uid(), date: "2026-07-13", workerId: chattu.id, amount: 2000, note: "Paid till 13th — ₹100 was left before today", paidBy: "Me" },
+    // Loren: earned 3d×500=1500, paid 2000 → ₹500 advance for next day
     { id: uid(), date: "2026-07-14", workerId: loren.id, amount: 2000, note: "Wages + ₹500 advance for next day", paidBy: "Me" },
+    // Rollins (new mistri): earned 1d×700=700, paid 700 → settled
+    { id: uid(), date: "2026-07-14", workerId: rollins.id, amount: 700, note: "New mistri — paid full for today", paidBy: "Me" },
+    // Simon (lakdi mistri): earned 1d×600=600, paid 600 → settled
+    { id: uid(), date: "2026-07-13", workerId: simon.id, amount: 600, note: "Lakdi mistri — paid full", paidBy: "Me" },
+    // NOTE: Alex has no payment recorded yet — add what you've paid him.
   ];
   const rooms = [
     { id: uid(), name: "Kitchen", budget: 50000 },
     { id: uid(), name: "Bathroom", budget: 30000 },
   ];
   const materials = [
-    { id: uid(), date: "2026-07-11", item: "Cement (bags)", qty: 5, unit: "bag", amount: 2000, vendor: "", roomId: rooms[0].id, paidBy: "Me" },
+    { id: uid(), date: "2026-07-11", item: "Bricks (1 taali)", qty: 1, unit: "taali", amount: 5200, vendor: "", roomId: "", paidBy: "Me" },
+    { id: uid(), date: "2026-07-11", item: "Tagaari (tool)", qty: 1, unit: "pc", amount: 330, vendor: "", roomId: "", paidBy: "Me" },
+    { id: uid(), date: "2026-07-12", item: "Mistri misc (bricks/tools etc.)", qty: 0, unit: "", amount: 400, vendor: "", roomId: "", paidBy: "Me" },
+    { id: uid(), date: "2026-07-13", item: "Balu (½ taali) + Cement (10 bags) + Gitti (30 ft)", qty: 0, unit: "", amount: 8620, vendor: "Paid ₹5600 + ₹3000", roomId: "", paidBy: "Me" },
   ];
   return { workers, attendance, payments, materials, rooms };
 }
