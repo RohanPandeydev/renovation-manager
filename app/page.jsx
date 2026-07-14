@@ -253,34 +253,65 @@ function Dashboard({ db, workerById, earnedFor, paidFor, daysFor, balanceFor, ma
 function Attendance({ db, attDate, setAttDate, toggleAtt, workerById }) {
   const present = db.attendance.filter((a) => a.date === attDate);
   const dayTotal = present.reduce((s, a) => s + (workerById(a.workerId)?.rate || 0) * (a.portion || 1), 0);
+
+  // all-days labour cost summary (newest first)
+  const dayMap = {};
+  db.attendance.forEach((a) => {
+    const cost = (workerById(a.workerId)?.rate || 0) * (a.portion || 1);
+    if (!dayMap[a.date]) dayMap[a.date] = { count: 0, cost: 0 };
+    dayMap[a.date].count += 1;
+    dayMap[a.date].cost += cost;
+  });
+  const days = Object.keys(dayMap).sort((a, b) => b.localeCompare(a));
+  const grandCost = days.reduce((s, d) => s + dayMap[d].cost, 0);
+
   return (
-    <div className="card">
-      <h2>Attendance</h2>
-      <div className="datepick">
-        <input type="date" value={attDate} onChange={(e) => setAttDate(e.target.value)} />
-        <button className="btn small" onClick={() => setAttDate(todayISO())}>Today</button>
-      </div>
-      <div className="small muted" style={{ marginBottom: 10 }}>Tap Full or ½ for each worker. Tap again to remove.</div>
-      {!db.workers.length && <div className="empty">Add workers first (Workers tab).</div>}
-      {db.workers.map((w) => {
-        const rec = db.attendance.find((a) => a.date === attDate && a.workerId === w.id);
-        const status = rec ? (rec.portion === 0.5 ? "half" : "full") : "none";
-        const wage = status === "none" ? 0 : w.rate * (status === "half" ? 0.5 : 1);
-        return (
-          <div className="att-row" key={w.id}>
-            <div className="avatar">{w.name[0]}</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700 }}>{w.name}<span className="tag">{w.type}</span></div>
-              <div className="small muted">{money(w.rate)}/day {status !== "none" ? "· today " + money(wage) : ""}</div>
+    <>
+      <div className="card">
+        <h2>Attendance</h2>
+        <div className="datepick">
+          <input type="date" value={attDate} onChange={(e) => setAttDate(e.target.value)} />
+          <button className="btn small" onClick={() => setAttDate(todayISO())}>Today</button>
+        </div>
+        <div className="small muted" style={{ marginBottom: 10 }}>Tap Full or ½ for each worker. Tap again to remove.</div>
+        {!db.workers.length && <div className="empty">Add workers first (Workers tab).</div>}
+        {db.workers.map((w) => {
+          const rec = db.attendance.find((a) => a.date === attDate && a.workerId === w.id);
+          const status = rec ? (rec.portion === 0.5 ? "half" : "full") : "none";
+          const wage = status === "none" ? 0 : w.rate * (status === "half" ? 0.5 : 1);
+          return (
+            <div className="att-row" key={w.id}>
+              <div className="avatar">{w.name[0]}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700 }}>{w.name}<span className="tag">{w.type}</span></div>
+                <div className="small muted">{money(w.rate)}/day {status !== "none" ? "· today " + money(wage) : ""}</div>
+              </div>
+              <div className={"chip " + (status === "full" ? "on" : "")} onClick={() => toggleAtt(w.id, "full")}>Full</div>
+              <div className={"chip half " + (status === "half" ? "on" : "")} onClick={() => toggleAtt(w.id, "half")}>½</div>
             </div>
-            <div className={"chip " + (status === "full" ? "on" : "")} onClick={() => toggleAtt(w.id, "full")}>Full</div>
-            <div className={"chip half " + (status === "half" ? "on" : "")} onClick={() => toggleAtt(w.id, "half")}>½</div>
+          );
+        })}
+        <div className="divider" />
+        <div className="row"><span className="muted">{present.length} present on {fmtDate(attDate)}</span><span className="big">{money(dayTotal)}</span></div>
+      </div>
+
+      <div className="card">
+        <div className="row" style={{ marginBottom: 10 }}>
+          <h2 style={{ margin: 0 }}>Daily labour cost</h2>
+          <span className="big" style={{ fontSize: 18 }}>{money(grandCost)}</span>
+        </div>
+        {!days.length && <div className="empty">No attendance marked yet.</div>}
+        {days.map((d) => (
+          <div className="att-row" key={d} onClick={() => setAttDate(d)} style={{ cursor: "pointer" }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700 }}>{fmtDate(d)}</div>
+              <div className="small muted">{dayMap[d].count} present</div>
+            </div>
+            <b>{money(dayMap[d].cost)}</b>
           </div>
-        );
-      })}
-      <div className="divider" />
-      <div className="row"><span className="muted">{present.length} present on {fmtDate(attDate)}</span><span className="big">{money(dayTotal)}</span></div>
-    </div>
+        ))}
+      </div>
+    </>
   );
 }
 
